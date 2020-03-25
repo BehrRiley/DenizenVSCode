@@ -48,7 +48,7 @@ function colorSet(name : string, incolor : string) {
 }
 
 const colorTypes : string[] = [
-    "comment_header", "comment_normal", "comment_code",
+    "comment_header", "comment_normal", "comment_code", "comment_1", "comment_2", "comment_3", "comment_4", 
     "key", "key_inline", "command", "quote_double", "quote_single",
     "tag", "tag_dot", "tag_param", "bad_space", "colons", "space", "normal"
 ];
@@ -244,15 +244,27 @@ function decorateLine(line : string, lineNumber: number, decorations: { [color: 
     if (trimmed.startsWith("#")) {
         const afterComment = trimmed.substring(1).trim();
         if (afterComment.startsWith("|") || afterComment.startsWith("+") || afterComment.startsWith("=")
-                || afterComment.startsWith("#") || afterComment.startsWith("_") || afterComment.startsWith("@")
-                || afterComment.startsWith("/")) {
-            decorateComment(line, lineNumber, "comment_header", decorations);
+            || afterComment.startsWith("#") || afterComment.startsWith("_") || afterComment.startsWith("@")
+            || afterComment.startsWith("/")) {
+            addDecor(decorations, "comment_header", lineNumber, preSpaces, line.length);
         }
         else if (afterComment.startsWith("-")) {
-            decorateComment(line, lineNumber, "comment_code", decorations);
+            addDecor(decorations, "comment_code", lineNumber, preSpaces, line.length);
+        }
+        else if (afterComment.startsWith("@")) {
+            addDecor(decorations, "comment_1", lineNumber, preSpaces, line.length);
+        }
+        else if (afterComment.startsWith("$")) {
+            addDecor(decorations, "comment_2", lineNumber, preSpaces, line.length);
+        }
+        else if (afterComment.startsWith("%")) {
+            addDecor(decorations, "comment_3", lineNumber, preSpaces, line.length);
+        }
+        else if (afterComment.startsWith("^")) {
+            addDecor(decorations, "comment_4", lineNumber, preSpaces, line.length);
         }
         else {
-            decorateComment(line, lineNumber, "comment_normal", decorations);
+            addDecor(decorations, "comment_normal", lineNumber, preSpaces, line.length);
         }
     }
     else if (trimmed.startsWith("-")) {
