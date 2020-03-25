@@ -56,7 +56,27 @@
                     "default": "#DD5500",
                     "description": "Color of code comments."
                 },
-                "denizenscript.theme_colors.key": {
+				"denizenscript.theme_colors.comment_1": {
+					"type": "string",
+					"default": "#6C0042",
+					"description": "Color of code comments."
+				},
+				"denizenscript.theme_colors.comment_2": {
+					"type": "string",
+					"default": "#DD1000",
+					"description": "Color of code comments."
+				},
+				"denizenscript.theme_colors.comment_3": {
+					"type": "string",
+					"default": "#00564A",
+					"description": "Color of code comments."
+				},
+				"denizenscript.theme_colors.comment_4": {
+					"type": "string",
+					"default": "#8A8A00",
+					"description": "Color of code comments."
+				},
+				"denizenscript.theme_colors.key": {
                     "type": "string",
                     "default": "#1155FF",
                     "description": "Color of basic keys (lines that end with a colon)."
