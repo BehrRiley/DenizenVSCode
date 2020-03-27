@@ -6,7 +6,7 @@
     "version": "0.2.1",
     "publisher": "denizenscript",
     "license": "MIT",
-    "repository": "https://github.com/DenizenScript/DenizenVSCode",
+    "repository": "https://github.com/BehrRiley/DenizenVSCode",
     "engines": {
         "vscode": "^1.33.0"
     },
