@@ -53,7 +53,7 @@ namespace DenizenLangServer
                     needsUpdate = NeedsNewDiag;
                     NeedsNewDiag = false;
                     loops++;
-                    if (loops > 60 && DiagDoc != null && DiagDoc.Uri.AbsolutePath.EndsWith(".dsc"))
+                    if (loops > 60 && DiagDoc != null && (DiagDoc.Uri.AbsolutePath.EndsWith(".dsc") || DiagDoc.Uri.Scheme == "untitled"))
                     {
                         loops = 0;
                         needsUpdate = true;
@@ -131,7 +131,7 @@ namespace DenizenLangServer
             {
                 checker.Run();
                 PublishCheckerResults(document.Uri, checker);
-                WorkspaceTracker.Replace(document.Uri, checker);
+                WorkspaceTracker.Replace(document.Uri, checker, document.Content);
             }
             catch (Exception ex)
             {

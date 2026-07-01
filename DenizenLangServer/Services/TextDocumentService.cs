@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -34,7 +34,7 @@ namespace DenizenLangServer.Services
             }
             // TODO: All this code is a dirty "it works" vertical slice mess that needs to be cleaned up
             TextDocument doc = GetDocument(textDocument);
-            if (doc == null || !textDocument.Uri.AbsolutePath.EndsWith(".dsc"))
+            if (doc == null || !(textDocument.Uri.AbsolutePath.EndsWith(".dsc") || textDocument.Uri.Scheme == "untitled"))
             {
                 return null;
             }
@@ -272,7 +272,7 @@ namespace DenizenLangServer.Services
                     return null;
                 }
                 TextDocument doc = GetDocument(textDocument);
-                if (doc == null || !textDocument.Uri.AbsolutePath.EndsWith(".dsc"))
+                if (doc == null || !(textDocument.Uri.AbsolutePath.EndsWith(".dsc") || textDocument.Uri.Scheme == "untitled"))
                 {
                     return new CompletionList(EmptyCompletionItems);
                 }

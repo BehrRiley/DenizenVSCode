@@ -1,4 +1,4 @@
-﻿using FreneticUtilities.FreneticExtensions;
+using FreneticUtilities.FreneticExtensions;
 using FreneticUtilities.FreneticToolkit;
 using SharpDenizenTools.ScriptAnalysis;
 using System;
@@ -14,6 +14,8 @@ namespace DenizenLangServer
     public static class WorkspaceTracker
     {
         public static ConcurrentDictionary<string, ScriptChecker> Checkers = new();
+
+        public static ConcurrentDictionary<string, string> UntitledPayloads = new();
 
         public static volatile ScriptingWorkspaceData WorkspaceData = null;
 
@@ -37,11 +39,15 @@ namespace DenizenLangServer
             Checkers[FixPath(file)] = checker;
         }
 
-        public static void Replace(Uri file, ScriptChecker checker)
+        public static void Replace(Uri file, ScriptChecker checker, string content = null)
         {
             if (!ClientConfiguration.TrackFullWorkspace || WorkspacePath is null)
             {
                 return;
+            }
+            if (file.Scheme == "untitled" && content != null)
+            {
+                UntitledPayloads[FixPath(file)] = content;
             }
             AddInternal(file, checker);
             long index = ++LastUpdate;
@@ -55,6 +61,10 @@ namespace DenizenLangServer
             if (uri is null)
             {
                 return null;
+            }
+            if (uri.Scheme == "untitled")
+            {
+                return uri.ToString();
             }
             string path = uri.ToString()["file://".Length..];
             // Microsoft always puts a preceding '/' on their corrupt escaped URIs.
@@ -77,6 +87,10 @@ namespace DenizenLangServer
 
         public static Uri PathToUri(string path)
         {
+            if (path.StartsWith("untitled:"))
+            {
+                return new(path);
+            }
             if (path[0..3].Contains(':'))
             {
                 path = $"/{Uri.EscapeDataString(path)}";
@@ -122,7 +136,8 @@ namespace DenizenLangServer
                         }
                         foreach ((string path, _) in copyCheckers)
                         {
-                            ScriptChecker checker = new(File.ReadAllText(path))
+                            string text = UntitledPayloads.TryGetValue(path, out string payload) ? payload : File.ReadAllText(path);
+                            ScriptChecker checker = new(text)
                             {
                                 SurroundingWorkspace = genData
                             };
