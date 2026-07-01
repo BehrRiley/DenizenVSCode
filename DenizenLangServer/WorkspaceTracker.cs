@@ -45,7 +45,7 @@ namespace DenizenLangServer
             {
                 return;
             }
-            if (file.Scheme == "untitled" && content != null)
+            if (file.Scheme == "untitled" && content is not null)
             {
                 UntitledPayloads[FixPath(file)] = content;
             }

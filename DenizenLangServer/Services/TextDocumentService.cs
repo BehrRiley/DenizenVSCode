@@ -256,6 +256,7 @@ namespace DenizenLangServer.Services
         public void DidClose(TextDocumentIdentifier textDocument)
         {
             Session.Documents.TryRemove(textDocument.Uri, out _);
+            WorkspaceTracker.UntitledPayloads.TryRemove(WorkspaceTracker.FixPath(textDocument.Uri), out _);
         }
 
         private static readonly CompletionItem[] EmptyCompletionItems = [];

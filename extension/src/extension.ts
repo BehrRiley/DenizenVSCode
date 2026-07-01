@@ -27,7 +27,7 @@ class HighlightCache {
 let HLCaches : Map<string, HighlightCache> = new Map<string, HighlightCache>();
 
 function getCache(path : string) {
-    let result = HLCaches.get(path);
+    let result : HighlightCache = HLCaches.get(path);
     if (result) {
         return result;
     }
@@ -121,19 +121,19 @@ const colorTypes : string[] = [
 function loadAllColors() {
     configuration = vscode.workspace.getConfiguration();
     for (const i in colorTypes) {
-        let str = configuration.get<string>("denizenscript.theme_colors." + colorTypes[i]);
+        let str : string = configuration.get("denizenscript.theme_colors." + colorTypes[i]);
         if (str === undefined) {
             outputChannel.appendLine("Missing color config for " + colorTypes[i]);
             continue;
         }
         colorSet(colorTypes[i], str);
     }
-    headerSymbols = configuration.get<string>("denizenscript.header_symbols") ?? "";
-    debugHighlighting = configuration.get<boolean>("denizenscript.debug.highlighting") ?? false;
-    debugFolding = configuration.get<boolean>("denizenscript.debug.folding") ?? false;
-    doInlineColors = configuration.get<boolean>("denizenscript.behaviors.do_inline_colors") ?? false;
-    displayDarkColors = configuration.get<boolean>("denizenscript.behaviors.display_dark_colors") ?? false;
-    const customColors = configuration.get<string>("denizenscript.theme_colors.text_color_map") ?? "";
+    headerSymbols = configuration.get("denizenscript.header_symbols");
+    debugHighlighting = configuration.get("denizenscript.debug.highlighting");
+    debugFolding = configuration.get("denizenscript.debug.folding");
+    doInlineColors = configuration.get("denizenscript.behaviors.do_inline_colors");
+    displayDarkColors = configuration.get("denizenscript.behaviors.display_dark_colors");
+    const customColors : string = configuration.get("denizenscript.theme_colors.text_color_map");
     const colorsSplit : string[] = customColors.split(',');
     for (const i in colorsSplit) {
         const color = colorsSplit[i];
@@ -217,7 +217,7 @@ function decorateTag(tag : string, start: number, lineNumber: number, decoration
             inTagCounter--;
             if (inTagCounter == 0) {
                 const tagText : string = tag.substring(tagStart + 1, i);
-                const autoColor = getTagColor(tagText, textColor);
+                let autoColor : string = getTagColor(tagText, textColor);
                 if (autoColor != null) {
                     addDecor(decorations, "auto:" + autoColor, lineNumber, start + tagStart + 1, start + i);
                     addDecor(decorations, "tag", lineNumber, start + tagStart, start + tagStart + 1);
@@ -366,7 +366,7 @@ function isHex(text : string) : boolean {
     return true;
 }
 
-function getColorData(color : string) : string | null {
+function getColorData(color : string) : string {
     if (color.startsWith("#")) {
         return color;
     }
@@ -380,7 +380,7 @@ function getColorData(color : string) : string | null {
     return null;
 }
 
-function fixDark(color : string) : string | null {
+function fixDark(color : string) {
     if (color == null) {
         return null;
     }
@@ -401,7 +401,7 @@ function fixDark(color : string) : string | null {
     return color;
 }
 
-function getTagColor(tagText : string, preColor : string) : string | null {
+function getTagColor(tagText : string, preColor : string) : string {
     if (!doInlineColors) {
         return null;
     }
@@ -417,7 +417,7 @@ function getTagColor(tagText : string, preColor : string) : string | null {
     }
     const formatter : string = formatCodes[tagText];
     if (formatter) {
-        const rgb = getColorData(preColor);
+        const rgb : string = getColorData(preColor);
         if (rgb) {
             if (formatter == "bold") {
                 return rgb + "|weight=bold";
@@ -484,7 +484,7 @@ function decorateArg(arg : string, start: number, lineNumber: number, decoration
             inTagCounter--;
             if (inTagCounter == 0) {
                 const tagText : string = arg.substring(tagStart + 1, i);
-                const autoColor = getTagColor(tagText, textColor);
+                let autoColor : string = getTagColor(tagText, textColor);
                 if (autoColor != null) {
                     addDecor(decorations, "tag", lineNumber, start + tagStart, start + tagStart + 1);
                     addDecor(decorations, "auto:" + autoColor, lineNumber, start + tagStart + 1, start + i);
@@ -964,7 +964,7 @@ async function activateDotNet() {
     try {
         outputChannel.appendLine("DenizenScript extension attempting to acquire .NET 8");
         const requestingExtensionId = 'DenizenScript.denizenscript';
-        const result = await vscode.commands.executeCommand<any>('dotnet.acquire', { version: '8.0', requestingExtensionId });
+        const result = await vscode.commands.executeCommand('dotnet.acquire', { version: '8.0', requestingExtensionId });
         outputChannel.appendLine("DenizenScript extension NET 8 Acquire result: " + result + ": " + result["dotnetPath"]);
         return result["dotnetPath"];
     }
@@ -994,7 +994,7 @@ function applyConfigColors() {
         let color = "";
         if (val.startsWith("<") && val.endsWith(">")) {
             for (const tag of val.slice(1, -1).split("><")) {
-                const newColor = getTagColor(tag, color);
+                const newColor : string = getTagColor(tag, color);
                 if (newColor) {
                     color = newColor;
                 }
@@ -1070,7 +1070,7 @@ export async function activate(context: vscode.ExtensionContext) {
     }, null, context.subscriptions);
     vscode.workspace.onDidChangeTextDocument(event => {
         if (event.document.languageId === 'denizenscript') {
-            const curFile = event.document.uri.toString();
+            const curFile : string = event.document.uri.toString();
             let highlight : HighlightCache = getCache(curFile);
             event.contentChanges.forEach(change => {
                 if (highlight.needRefreshStartLine == -1 || change.range.start.line < highlight.needRefreshStartLine) {
