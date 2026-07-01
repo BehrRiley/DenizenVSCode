@@ -34,7 +34,7 @@ namespace DenizenLangServer.Services
             }
             // TODO: All this code is a dirty "it works" vertical slice mess that needs to be cleaned up
             TextDocument doc = GetDocument(textDocument);
-            if (doc == null || !(textDocument.Uri.AbsolutePath.EndsWith(".dsc") || textDocument.Uri.Scheme == "untitled"))
+            if (doc == null || !WorkspaceTracker.IsDenizenDocument(textDocument.Uri))
             {
                 return null;
             }
@@ -272,7 +272,7 @@ namespace DenizenLangServer.Services
                     return null;
                 }
                 TextDocument doc = GetDocument(textDocument);
-                if (doc == null || !(textDocument.Uri.AbsolutePath.EndsWith(".dsc") || textDocument.Uri.Scheme == "untitled"))
+                if (doc == null || !WorkspaceTracker.IsDenizenDocument(textDocument.Uri))
                 {
                     return new CompletionList(EmptyCompletionItems);
                 }

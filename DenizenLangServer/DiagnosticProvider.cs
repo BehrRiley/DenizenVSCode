@@ -53,7 +53,7 @@ namespace DenizenLangServer
                     needsUpdate = NeedsNewDiag;
                     NeedsNewDiag = false;
                     loops++;
-                    if (loops > 60 && DiagDoc != null && (DiagDoc.Uri.AbsolutePath.EndsWith(".dsc") || DiagDoc.Uri.Scheme == "untitled"))
+                    if (loops > 60 && DiagDoc != null && WorkspaceTracker.IsDenizenDocument(DiagDoc.Uri))
                     {
                         loops = 0;
                         needsUpdate = true;

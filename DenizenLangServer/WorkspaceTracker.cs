@@ -56,6 +56,15 @@ namespace DenizenLangServer
 
         private static bool HaveShownPath = false;
 
+        public static bool IsDenizenDocument(Uri uri)
+        {
+            if (uri is null)
+            {
+                return false;
+            }
+            return uri.AbsolutePath.EndsWith(".dsc") || uri.Scheme == "untitled";
+        }
+
         public static string FixPath(Uri uri)
         {
             if (uri is null)
