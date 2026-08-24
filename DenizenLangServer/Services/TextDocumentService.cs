@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -34,7 +34,7 @@ namespace DenizenLangServer.Services
             }
             // TODO: All this code is a dirty "it works" vertical slice mess that needs to be cleaned up
             TextDocument doc = GetDocument(textDocument);
-            if (doc == null || !textDocument.Uri.AbsolutePath.EndsWith(".dsc"))
+            if (doc == null || !WorkspaceTracker.IsDenizenDocument(textDocument.Uri))
             {
                 return null;
             }
@@ -256,6 +256,7 @@ namespace DenizenLangServer.Services
         public void DidClose(TextDocumentIdentifier textDocument)
         {
             Session.Documents.TryRemove(textDocument.Uri, out _);
+            WorkspaceTracker.UntitledPayloads.TryRemove(WorkspaceTracker.FixPath(textDocument.Uri), out _);
         }
 
         private static readonly CompletionItem[] EmptyCompletionItems = [];
@@ -272,7 +273,7 @@ namespace DenizenLangServer.Services
                     return null;
                 }
                 TextDocument doc = GetDocument(textDocument);
-                if (doc == null || !textDocument.Uri.AbsolutePath.EndsWith(".dsc"))
+                if (doc == null || !WorkspaceTracker.IsDenizenDocument(textDocument.Uri))
                 {
                     return new CompletionList(EmptyCompletionItems);
                 }

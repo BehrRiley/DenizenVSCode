@@ -50,7 +50,10 @@ function activateLanguageServer(context: vscode.ExtensionContext, dotnetPath : s
         debug: { command: dotnetPath, args: [pathFile, "--debug"], options: { cwd: pathDir } }
     }
     let clientOptions: languageClient.LanguageClientOptions = {
-        documentSelector: ["denizenscript"],
+        documentSelector: [
+            { scheme: 'file', language: 'denizenscript' },
+            { scheme: 'untitled', language: 'denizenscript' }
+        ],
         synchronize: {
             configurationSection: "denizenscript",
         },
@@ -153,8 +156,7 @@ let refreshTimer: NodeJS.Timer | undefined = undefined;
 function refreshDecor() {
     refreshTimer = undefined;
     for (const editor of vscode.window.visibleTextEditors) {
-        const uri = editor.document.uri.toString();
-        if (!uri.endsWith(".dsc")) {
+        if (editor.document.languageId !== 'denizenscript') {
             continue;
         }
         decorateFullFile(editor);
@@ -1061,14 +1063,14 @@ export async function activate(context: vscode.ExtensionContext) {
     activateLanguageServer(context, path);
     activateHighlighter(context);
     vscode.workspace.onDidOpenTextDocument(doc => {
-        if (doc.uri.toString().endsWith(".dsc")) {
+        if (doc.languageId === 'denizenscript') {
             tryLoadConfigYaml(doc);
             forceRefresh("onDidOpenTextDocument");
         }
     }, null, context.subscriptions);
     vscode.workspace.onDidChangeTextDocument(event => {
-        const curFile : string = event.document.uri.toString();
-        if (curFile.endsWith(".dsc")) {
+        if (event.document.languageId === 'denizenscript') {
+            const curFile : string = event.document.uri.toString();
             let highlight : HighlightCache = getCache(curFile);
             event.contentChanges.forEach(change => {
                 if (highlight.needRefreshStartLine == -1 || change.range.start.line < highlight.needRefreshStartLine) {
@@ -1091,8 +1093,7 @@ export async function activate(context: vscode.ExtensionContext) {
     }, null, context.subscriptions);
     vscode.window.onDidChangeVisibleTextEditors(editors => {
         for (const editor of editors) {
-            const uri = editor.document.uri.toString();
-            if (!uri.endsWith(".dsc")) {
+            if (editor.document.languageId !== 'denizenscript') {
                 continue;
             }
             tryLoadConfigYaml(editor.document);
